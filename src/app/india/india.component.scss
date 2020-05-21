@@ -1,0 +1,188 @@
+@import '../../variables';
+
+.container {
+  color: $font-color-wb;
+  padding: 50px 20px 20px;
+  font-size: 16px;
+
+
+
+  .iconography {
+    margin-top: 20px
+  }
+
+  .india {
+    margin-top: 20px;
+  }
+
+  .india {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+
+  .label-heading {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .stats-cards {
+
+    .card {
+      background-color: rgba(255, 255, 255, 1);
+      margin: 5px;
+      position: relative;
+      padding: 10px
+    }
+
+
+    .flag-icon {
+      position: absolute;
+      z-index: 0;
+      width: 30px;
+      height: 30px;
+      left: 0;
+      opacity: 0.5;
+    }
+
+    .card-content {
+      z-index: 1;
+      position: relative;
+      padding-left: 30px;
+      font-size: 12px;
+
+      &.india {
+        height: 70px;
+
+        * {
+          font-weight: bold;
+        }
+      }
+    }
+
+  }
+}
+
+.warn {
+  color: red;
+}
+
+.new-cases {
+  font-weight: bold;
+}
+
+.recovered {
+  color: green;
+}
+
+code {
+  font-weight: bold;
+  font-size: large;
+}
+
+.link_color {
+  color: white;
+  text-decoration: underline;
+}
+
+
+
+
+.district-close {
+  position: absolute;
+  top: -20px;
+  right: 0px
+}
+
+.district-data-container {
+  margin-bottom: 20px
+}
+
+.graph-button {
+  color: $font-color-wb;
+}
+
+
+
+.fade-in {
+  animation: fadeIn ease 1s;
+  -webkit-animation: fadeIn ease 1s;
+  -moz-animation: fadeIn ease 1s;
+  -o-animation: fadeIn ease 1s;
+  -ms-animation: fadeIn ease 1s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@-moz-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@-o-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@-ms-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+
+
+
+div[fxLayout="column"]>div[fxFlex],
+button[fxFlex],
+mat-card[fxFlex],
+span[fxFlex] {
+  flex: 1 0 auto !important;
+}
+
+.update{
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.world{
+  margin:10px !important;
+  padding: 10px;
+}
+
+.color-sup{
+  color: #03bf03;
+  font-size: 12px;
+}

@@ -1,0 +1,13 @@
+<button mat-raised-button
+    class="download-button"
+    *ngIf="!messageService.ios"
+    (click)="addToHomeScreen()"
+    matTooltip="Install App on Android Phones"
+    color="accent">Add To Mobile - Android Users</button>
+
+
+
+<mat-spinner *ngIf="messageService?.spinner"
+    class="loader-position"></mat-spinner>
+
+<router-outlet></router-outlet>

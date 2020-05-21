@@ -1,0 +1,81 @@
+.container {
+  margin-top: 50px;
+  font-size: 16px
+}
+
+mat-card {
+  margin: 10px
+}
+
+.flag-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.card-content {
+  position: relative;
+  font-size: 16px;
+
+  &.india {
+    height: 70px;
+
+    * {
+      font-weight: bold;
+    }
+  }
+}
+
+
+
+
+
+.warn {
+  color: red;
+}
+
+.new-cases {
+  font-weight: bold;
+}
+
+.recovered {
+  color: green;
+}
+
+
+code {
+  font-weight: bold;
+  font-size: large;
+  word-break: break-all;
+}
+
+.link_color {
+  color: WHITE;
+  text-decoration: underline;
+}
+
+.world-timestamp {
+  margin-right: 5%;
+}
+
+.mat-card {
+  padding: 5px;
+  margin: 5px;
+}
+
+div[fxLayout="row wrap"]>mat-card[fxFlex],
+.mat-card>div[fxFlex],
+.mat-card>span[fxFlex],
+div[fxLayout="column"]>div[fxFlex],
+div[fxLayout="row"]>span[fxFlex] {
+  flex: 1 1 100% !important
+}
+
+.search {
+
+  padding: 20px;
+
+}
+
+.world-full-width {
+  width: 50%;
+}
