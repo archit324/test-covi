@@ -1,9 +1,9 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import {FormControl} from '@angular/forms';
-import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 import * as _ from 'lodash';
 import { MessageService } from '../message.service';
@@ -18,6 +18,7 @@ export class IndiaComponent implements OnInit, OnDestroy {
   title = 'covid';
   myControl = new FormControl();
   filteredOptions: Observable<string[]>;
+  optionsDistrictData: Observable<string[]>;
   masterData: any = {};
   india = {};
   statewiseData: any;
@@ -31,9 +32,12 @@ export class IndiaComponent implements OnInit, OnDestroy {
   temp: any;
   copyStatewise: any;
   filterName: any;
+  filterName1: any;
   options: any;
+  optionsDistrict: any;
   indiaTimeSeries;
-  showMessage: boolean = false;
+  showMessage = false;
+  districtName;
   colorScheme = {
     domain: ['#CFC0BB', '#5AA454', '#E44D25']
   };
@@ -44,7 +48,7 @@ export class IndiaComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // call all the APIs on load
-
+    this.getZones();
     this.getData();
     this.getStateData();
     this.getDisttData();
@@ -73,22 +77,82 @@ export class IndiaComponent implements OnInit, OnDestroy {
     }, 6000000); // 1 min
   }
 
+  getZones(){
+    // this.httpClient.get('https://api.covid19india.org/zones.json').
+    //           subscribe((b: any) => {
+    //             let a=b.zones;
+    //              a=a.map(i=> {  return {'name': i.district}});
+    //             console.log(a);
+
+    //           });
+    this.httpClient.get("assets/district-name.json").subscribe(res =>{
+        this.optionsDistrict = res;
+        this.optionsDistrict = this.optionsDistrict.map( a => a.name);
+        this.optionsDistrictData = this.myControl.valueChanges
+        .pipe(
+          startWith(''),
+          map(value => this._filter1(value))
+        );
+    });
+  }
+
+  private _filter1(value: string) {
+    const filterValue = value.toLowerCase();
+
+    return this.optionsDistrict.filter(option => option.toLowerCase().startsWith(filterValue));
+  }
+
+  getDistrictName() {
+    this.message.getPosition().then(pos => {
+      this.message.spinner = true;
+      this.httpClient.get('https://us1.locationiq.com/v1/reverse.php?key=816e6219b8e226&lat='
+        + pos.lat + '&lon=' + pos.lng + '&format=json')
+        .subscribe((a: any) => {
+          this.districtName = a.address.state_district;
+
+          if (a.address && a.address.state_district) {
+            this.message.spinner = false;
+            this.httpClient.get('https://api.covid19india.org/zones.json').
+              subscribe((b: any) => {
+                const zoneColor = b.zones.filter(c => c.district.toLowerCase() === a.address.state_district.toLowerCase())[0].zone;
+                this.dialog.open(DialogOverviewDialogComponent, {
+                  data: { message: 'Your district ' + a.address.state_district + ' is in ' + zoneColor + ' zone.', type: 'normal' },
+                  panelClass: zoneColor.toLowerCase() + 'zone',
+
+                });
+              });
+
+
+          }
+          else {
+            this.message.spinner = false;
+            this.dialog.open(DialogOverviewDialogComponent, {
+              data: { message: 'This functionality is not valid in your country', type: 'normal' }
+            });
+          }
+        });
+    });
+
+  }
+
+
   getData() {
     this.message.spinner = true;
     this.httpClient.get('https://api.covid19india.org/data.json')
       .subscribe((a: any) => {
         this.statewiseData = a.statewise;
-        this.statewiseData.map(( a ) => a.percentage = ((a.recovered / a.confirmed ) * 100).toFixed(0) )
+        console.log(this.statewiseData)
+        this.statewiseData.map((a) => a.percentage = ((a.recovered / a.confirmed) * 100).toFixed(0))
         this.indiaTimeSeries = a.cases_time_series;
-        this.temp = this.statewiseData.filter( a => a.state !== 'Total');
-        this.options = this.temp.map( a => a.state);
+        this.temp = this.statewiseData.filter(a => a.state !== 'Total');
+        this.options = this.temp.map(a => a.state);
         this.copyStatewise = _.cloneDeep(this.statewiseData);
 
         this.filteredOptions = this.myControl.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filter(value))
-      );
+          .pipe(
+            startWith(''),
+            map(value => this._filter(value))
+          );
         this.india = _.filter(this.statewiseData, (b: any) => b.state === 'Total');
         this.createIndiaGraph();
       });
@@ -100,7 +164,6 @@ export class IndiaComponent implements OnInit, OnDestroy {
 
     return this.options.filter(option => option.toLowerCase().startsWith(filterValue));
   }
-
 
   getStateData() {
     this.message.spinner = true;
@@ -118,25 +181,26 @@ export class IndiaComponent implements OnInit, OnDestroy {
       });
   }
 
-  getState(state){
-    if ( state.length > 0){
+  getState(state) {
+    if (state.length > 0) {
       let states = state.toLowerCase();
       states = states.trim();
       this.statewiseData = this.copyStatewise;
       this.statewiseData = this.statewiseData.filter(a => (a.state).toLowerCase().startsWith(states));
 
     }
-    else{
+    else {
       this.statewiseData = this.copyStatewise;
     }
   }
+
   // clear search
-  clear(){
-    if (this.filterName){
-      this.filterName = "";
+  clear() {
+    if (this.filterName) {
+      this.filterName = '';
       this.getState('');
-    }else{
-      this.filterName = "";
+    } else {
+      this.filterName = '';
     }
   }
 
