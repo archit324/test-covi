@@ -1,5 +1,5 @@
 # Demo 
-http://covid-19-status.surge.sh/
+http://test-covid19.surge.sh/
 
 # Covid19
 
