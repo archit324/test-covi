@@ -78,13 +78,6 @@ export class IndiaComponent implements OnInit, OnDestroy {
   }
 
   getZones(){
-    // this.httpClient.get('https://api.covid19india.org/zones.json').
-    //           subscribe((b: any) => {
-    //             let a=b.zones;
-    //              a=a.map(i=> {  return {'name': i.district}});
-    //             console.log(a);
-
-    //           });
     this.httpClient.get("assets/district-name.json").subscribe(res =>{
         this.optionsDistrict = res;
         this.optionsDistrict = this.optionsDistrict.map( a => a.name);
@@ -102,38 +95,21 @@ export class IndiaComponent implements OnInit, OnDestroy {
     return this.optionsDistrict.filter(option => option.toLowerCase().startsWith(filterValue));
   }
 
-  getDistrictName() {
-    this.message.getPosition().then(pos => {
-      this.message.spinner = true;
-      this.httpClient.get('https://us1.locationiq.com/v1/reverse.php?key=816e6219b8e226&lat='
-        + pos.lat + '&lon=' + pos.lng + '&format=json')
-        .subscribe((a: any) => {
-          this.districtName = a.address.state_district;
-
-          if (a.address && a.address.state_district) {
+  getDistrictName(name) {
+      if (name) {
             this.message.spinner = false;
             this.httpClient.get('https://api.covid19india.org/zones.json').
               subscribe((b: any) => {
-                const zoneColor = b.zones.filter(c => c.district.toLowerCase() === a.address.state_district.toLowerCase())[0].zone;
+                const zoneColor = b.zones.filter(c => c.district.toLowerCase() === name.toLowerCase())[0].zone;
+
                 this.dialog.open(DialogOverviewDialogComponent, {
-                  data: { message: 'Your district ' + a.address.state_district + ' is in ' + zoneColor + ' zone.', type: 'normal' },
+                  data: { message: 'Your district ' + name + ' is in ' + zoneColor + ' zone.', type: 'normal' },
                   panelClass: zoneColor.toLowerCase() + 'zone',
 
                 });
               });
-
-
-          }
-          else {
-            this.message.spinner = false;
-            this.dialog.open(DialogOverviewDialogComponent, {
-              data: { message: 'This functionality is not valid in your country', type: 'normal' }
-            });
-          }
-        });
-    });
-
-  }
+         }
+}
 
 
   getData() {
