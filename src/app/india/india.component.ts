@@ -14,6 +14,7 @@ import * as D3 from 'd3';
   templateUrl: './india.component.html',
   styleUrls: ['./india.component.scss']
 })
+
 export class IndiaComponent implements OnInit, OnDestroy {
   title = 'covid';
   myControl = new FormControl();
@@ -34,6 +35,7 @@ export class IndiaComponent implements OnInit, OnDestroy {
   filterName: any;
   filterName1: any;
   options: any;
+  districtZones: any;
   optionsDistrict: any;
   indiaTimeSeries;
   showMessage = false;
@@ -52,7 +54,15 @@ export class IndiaComponent implements OnInit, OnDestroy {
     this.getData();
     this.getStateData();
     this.getDisttData();
-
+    this.httpClient.get('https://api.covid19india.org/zones.json').
+              subscribe((b: any) => {
+                this.districtZones =  b;
+                let arr: any;
+                let arr1: any;
+                arr1 = this.districtZones.zones.map(a => a.district) 
+                arr = this.districtZones.zones.map(a=> a.zone)
+                this.message.data = arr1.reduce((o, k, i) => ({...o, [k]: arr[i]}), {});
+    });
     // graph size
     const smallScreen = window.innerWidth < 600;
     if (smallScreen) {
@@ -81,12 +91,14 @@ export class IndiaComponent implements OnInit, OnDestroy {
     this.httpClient.get("assets/district-name.json").subscribe(res =>{
         this.optionsDistrict = res;
         this.optionsDistrict = this.optionsDistrict.map( a => a.name);
+        this.optionsDistrict.sort();
         this.optionsDistrictData = this.myControl.valueChanges
         .pipe(
           startWith(''),
           map(value => this._filter1(value))
         );
     });
+
   }
 
   private _filter1(value: string) {
@@ -95,19 +107,22 @@ export class IndiaComponent implements OnInit, OnDestroy {
     return this.optionsDistrict.filter(option => option.toLowerCase().startsWith(filterValue));
   }
 
+  clear1() {
+    if (this.filterName1) {
+      this.filterName1 = '';
+    } else {
+      this.filterName1 = '';
+    }
+  }
   getDistrictName(name) {
-      if (name) {
+      if (name && this.districtZones) {
             this.message.spinner = false;
-            this.httpClient.get('https://api.covid19india.org/zones.json').
-              subscribe((b: any) => {
-                const zoneColor = b.zones.filter(c => c.district.toLowerCase() === name.toLowerCase())[0].zone;
-
-                this.dialog.open(DialogOverviewDialogComponent, {
-                  data: { message: 'Your district ' + name + ' is in ' + zoneColor + ' zone.', type: 'normal' },
-                  panelClass: zoneColor.toLowerCase() + 'zone',
+            const zoneColor = this.districtZones.zones.filter(c => c.district.toLowerCase() === name.toLowerCase())[0].zone;
+            this.dialog.open(DialogOverviewDialogComponent, {
+                data: { message: 'Your district ' + name + ' is in ' + zoneColor + ' zone.', type: 'normal' },
+                panelClass: zoneColor.toLowerCase() + 'zone',
 
                 });
-              });
          }
 }
 
@@ -193,15 +208,21 @@ export class IndiaComponent implements OnInit, OnDestroy {
         this.districtDataOne = _.orderBy(this.districtDataOne, ['confirmed'], ['desc']);
         this.districtDataOne.index = i;
         this.districtDataOne.state = state;
+        console.log(this.districtZones.zones.filter(b=> {if(b.district){
+        }}))
+        this.districtDataOne.map(a => a.zone = this.districtZones.zones.filter(b=> {if ( a.district == b.district){
+          a.notes=b.zone;
+        }}));
+
+        
+
+        // console.log(this.districtZones.zones)
       } else {
         this.dialog.open(DialogOverviewDialogComponent, {
           data: { message: 'District data not available!', type: 'normal' }
         });
       }
     }
-
-
-
   }
 
   createIndiaGraph() {
