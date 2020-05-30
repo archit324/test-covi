@@ -63,9 +63,7 @@
          <div class="new-cases">
           Cases: <span style="float: right">{{country.cases}}</span>
           </div>
-          <div class="active">
-            Active: <span style="float: right">{{country.active_cases}}</span>
-          </div>
+          
 
           <div class="warn">
             Deaths: <span style="float: right">{{country.deaths}}<sup> {{country.death_percentage}}%</sup></span>
@@ -73,7 +71,11 @@
            
             <div class="recovered">
               Recovered: <span style="float: right">{{country.total_recovered}}<sup> {{country.percentage}}%</sup></span>
-      </div> 
+            </div>
+            
+            <div class="active-home">
+              Active: <span style="float: right">{{country.active_cases}}</span>
+            </div>
       </div>
        </div>
      </mat-card>

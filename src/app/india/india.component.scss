@@ -11,9 +11,6 @@
     margin-top: 20px
   }
 
-  .india {
-    margin-top: 20px;
-  }
 
   .india {
     margin-top: 20px;
@@ -65,22 +62,29 @@
 
 .warn {
   color: red;
-  margin-bottom: 21px;
+  border-bottom: 1px solid #949494;
+  padding: 10px;
 
 }
 
 .new-cases {
   font-weight: bold;
-  margin-bottom: 20px;
+  border-bottom: 1px solid #949494;
+  padding: 10px;
+
 
 }
 
 .recovered {
   color: green;
-  margin-bottom: 8px;
+  border-bottom: 1px solid #949494;
+  padding: 10px;
+
 
 }
-
+.margin1{
+  padding: 10px;
+}
 code {
   font-weight: bold;
   font-size: large;
@@ -192,9 +196,10 @@ span[fxFlex] {
   font-size: 12px;
 }
 
-.active{
-  color: blue;
-  margin-bottom: 18px;
+.active-home{
+  color: #5555ab;
+  padding: 10px;
+  border-bottom: 1px solid #949494;
 }
 
 .supsub {
@@ -211,4 +216,8 @@ span[fxFlex] {
 
 .supsub sub {
   top: .8em;
+}
+
+.margin{
+  padding: 30px;
 }
