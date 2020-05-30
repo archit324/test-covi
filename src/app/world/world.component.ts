@@ -46,9 +46,8 @@ export class WorldComponent implements OnChanges, OnDestroy {
         [obj => parseFloat(obj.cases.replace(/,/g, ''))], ['desc']);
       this.masterData.countries_stat.map( (a) => a.percentage= ((parseInt(a.total_recovered.replace(/\,/g,''))/parseInt(a.cases.replace(/\,/g,'')))*100).toFixed(2));
       this.masterData.countries_stat.map( (a) => a.death_percentage= ((parseInt(a.deaths.replace(/\,/g,''))/parseInt     (a.cases.replace(/\,/g,'')))*100).toFixed(2));
-      this.masterData.countries_stat.map( (a) => a.active= (parseInt(a.cases.replace(/\,/g,'')))-(parseInt(a.deaths.replace(/\,/g,''))+parseInt(a.total_recovered.replace(/\,/g,''))) );
+    
       this.searchedData = _.cloneDeep(this.masterData.countries_stat);
-      console.log(this.masterData.countries_stat)
       this.updateTimestamp = this.masterData.statistic_taken_at;
       this.messageService.spinner = false;
     });
