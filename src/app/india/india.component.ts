@@ -18,6 +18,7 @@ import * as D3 from 'd3';
 export class IndiaComponent implements OnInit, OnDestroy {
   title = 'covid';
   myControl = new FormControl();
+  myControl1 = new FormControl();
   filteredOptions: Observable<string[]>;
   optionsDistrictData: Observable<string[]>;
   masterData: any = {};
@@ -92,7 +93,7 @@ export class IndiaComponent implements OnInit, OnDestroy {
         this.optionsDistrict = res;
         this.optionsDistrict = this.optionsDistrict.map( a => a.name);
         this.optionsDistrict.sort();
-        this.optionsDistrictData = this.myControl.valueChanges
+        this.optionsDistrictData = this.myControl1.valueChanges
         .pipe(
           startWith(''),
           map(value => this._filter1(value))
@@ -134,6 +135,9 @@ export class IndiaComponent implements OnInit, OnDestroy {
         this.statewiseData = a.statewise;
         console.log(this.statewiseData)
         this.statewiseData.map((a) => a.percentage = ((a.recovered / a.confirmed) * 100).toFixed(0))
+        this.statewiseData.map((a) => a.death_percentage = ((a.deaths / a.confirmed) * 100).toFixed(0))
+
+        this.statewiseData.map((a) => a.active = parseInt(a.confirmed)-(parseInt(a.recovered)+parseInt(a.deaths)));
         this.indiaTimeSeries = a.cases_time_series;
         this.temp = this.statewiseData.filter(a => a.state !== 'Total');
         this.options = this.temp.map(a => a.state);
@@ -208,15 +212,6 @@ export class IndiaComponent implements OnInit, OnDestroy {
         this.districtDataOne = _.orderBy(this.districtDataOne, ['confirmed'], ['desc']);
         this.districtDataOne.index = i;
         this.districtDataOne.state = state;
-        console.log(this.districtZones.zones.filter(b=> {if(b.district){
-        }}))
-        this.districtDataOne.map(a => a.zone = this.districtZones.zones.filter(b=> {if ( a.district == b.district){
-          a.notes=b.zone;
-        }}));
-
-        
-
-        // console.log(this.districtZones.zones)
       } else {
         this.dialog.open(DialogOverviewDialogComponent, {
           data: { message: 'District data not available!', type: 'normal' }

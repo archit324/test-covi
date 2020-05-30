@@ -65,14 +65,20 @@
 
 .warn {
   color: red;
+  margin-bottom: 21px;
+
 }
 
 .new-cases {
   font-weight: bold;
+  margin-bottom: 20px;
+
 }
 
 .recovered {
   color: green;
+  margin-bottom: 8px;
+
 }
 
 code {
@@ -184,4 +190,25 @@ span[fxFlex] {
 .color-sup {
   color: #03bf03;
   font-size: 12px;
+}
+
+.active{
+  color: blue;
+  margin-bottom: 18px;
+}
+
+.supsub {
+  display: inline-block;
+}
+
+.supsub sup,
+.supsub sub {
+  position: relative;
+  display: block;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.supsub sub {
+  top: .8em;
 }
