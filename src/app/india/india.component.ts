@@ -222,11 +222,14 @@ export class IndiaComponent implements OnInit, OnDestroy {
 
   createIndiaGraph() {
     if (this.indiaTimeSeries) {
-
+      let newArr = [];
+      for (let i = this.indiaTimeSeries.length - 29; i <this.indiaTimeSeries.length; i++){
+          newArr.push(this.indiaTimeSeries[i]);
+      }
       const totalConfirmed = [];
       const totalDeceased = [];
       const totalRecovered = [];
-      this.indiaTimeSeries.map(a => {
+      newArr.map(a => {
         const mon = a.date.substring(3, 6); // only showing from month of March
         if (!(mon === 'Jan' || mon === 'Feb')) {
           const y = {
