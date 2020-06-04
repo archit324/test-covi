@@ -17,6 +17,16 @@ import * as D3 from 'd3';
 
 export class IndiaComponent implements OnInit, OnDestroy {
   title = 'covid';
+  deaths = false;
+  selectOptions: any = [
+    {value: 'nofilter', viewValue: 'No Filter'},
+    {value: 'recovered', viewValue: 'Recovered'},
+    {value: 'confirmed', viewValue: 'Confirmed'},
+    {value: 'deaths', viewValue: 'Deaths'},
+    {value: 'alphabetical', viewValue: 'Alphabetical'},
+  ];
+  recovered = false;
+  cases = false;
   myControl = new FormControl();
   myControl1 = new FormControl();
   filteredOptions: Observable<string[]>;
@@ -51,8 +61,9 @@ export class IndiaComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // call all the APIs on load
+    console.log(this.deaths)
     this.getZones();
-    this.getData();
+    this.getData(event);
     this.getStateData();
     this.getDisttData();
     this.httpClient.get('https://api.covid19india.org/zones.json').
@@ -76,7 +87,7 @@ export class IndiaComponent implements OnInit, OnDestroy {
     // set the timer for all the APIs
 
     this.dataInterval = setInterval(() => {
-      this.getData();
+      this.getData(event);
     }, 1000000); // 10 sec interval
 
     this.stateDataInterval = setInterval(() => {
@@ -128,12 +139,36 @@ export class IndiaComponent implements OnInit, OnDestroy {
 }
 
 
-  getData() {
+  getData(event) {
     this.message.spinner = true;
     this.httpClient.get('https://api.covid19india.org/data.json')
       .subscribe((a: any) => {
         this.statewiseData = a.statewise;
-        console.log(this.statewiseData)
+        if ( event == "deaths" ){
+          this.statewiseData.sort(function (a, b) {
+          return b.deaths - a.deaths;
+        })
+      }
+      else if(event == "confirmed"){
+            this.statewiseData.sort(function (a, b) {
+            return b.confirmed - a.confirmed;
+        })
+      }
+      else if(event == "recovered"){
+          this.statewiseData.sort(function (a, b) {
+              return b.recovered - a.recovered;
+        })
+      }
+      else if(event == "alphabetical"){
+        this.statewiseData.sort(function(a, b){
+          var nameA=a.state.toLowerCase(), nameB=b.state.toLowerCase()
+          if (nameA < nameB) //sort string ascending
+                  return -1 
+              if (nameA > nameB)
+                  return 1
+              return 0 //default return value (no sorting)
+          })
+    }else {
         this.statewiseData.map((a) => a.percentage = ((a.recovered / a.confirmed) * 100).toFixed(0))
         this.statewiseData.map((a) => a.death_percentage = ((a.deaths / a.confirmed) * 100).toFixed(0))
 
@@ -150,6 +185,7 @@ export class IndiaComponent implements OnInit, OnDestroy {
           );
         this.india = _.filter(this.statewiseData, (b: any) => b.state === 'Total');
         this.createIndiaGraph();
+          }
       });
 
     this.message.spinner = false;
