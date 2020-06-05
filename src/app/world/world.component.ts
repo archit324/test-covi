@@ -14,24 +14,31 @@ import * as _ from 'lodash';
 export class WorldComponent implements OnChanges, OnDestroy {
   title = 'covid';
   masterData: any = {};
+  selectOptions: any = [
+    {value: 'nofilter', viewValue: 'No Filter'},
+    {value: 'recovered', viewValue: 'Recovered'},
+    {value: 'confirmed', viewValue: 'Confirmed'},
+    {value: 'deaths', viewValue: 'Deaths'},
+    {value: 'alphabetical', viewValue: 'Alphabetical'},
+  ];
   show: any = false;
   dataInterval: any;
   filterName: any;
   searchedData: any;
   updateTimestamp: any;
   constructor(private httpClient: HttpClient, public messageService: MessageService) {
-    this.getData();
+    this.getData(event);
 
   }
 
   ngOnChanges() {
     this.dataInterval = setInterval(() => {
-      this.getData();
+      this.getData(event);
     }, 10000); // 10 sec interval
 
   }
 
-  getData() {
+  getData(event) {
     this.messageService.spinner = true;
     const httpOptions = {
       headers: new HttpHeaders({
@@ -44,10 +51,39 @@ export class WorldComponent implements OnChanges, OnDestroy {
       this.masterData = a;
       this.masterData.countries_stat = _.orderBy(this.masterData.countries_stat,
         [obj => parseFloat(obj.cases.replace(/,/g, ''))], ['desc']);
+      if ( event == "deaths" ){
+        this.masterData.countries_stat.sort(function (a, b) {
+        return b.deaths - a.deaths;
+      })
+    }
+    else if(event == "confirmed"){
+          this.masterData.countries_stat.sort(function (a, b) {
+          return b.cases - a.cases;
+      })
+    }
+    else if(event == "recovered"){
+        this.masterData.countries_stat.sort(function (a, b) {
+            return b.total_recovered - a.total_recovered;
+      })
+    }
+    else if(event == "alphabetical"){
+      this.masterData.countries_stat.sort(function(a, b){
+      var nameA=a.country_name.toLowerCase(), nameB=b.country_name.toLowerCase()
+      if (nameA < nameB) //sort string ascendin
+            return -1 
+            if (nameA > nameB)
+                return 1
+            return 0 //default return value (no sorting)
+        })
+  }else {
+    this.masterData.countries_stat = _.orderBy(this.masterData.countries_stat,
+      [obj => parseFloat(obj.cases.replace(/,/g, ''))], ['desc']);
+  }
+     
+      console.log(this.masterData.countries_stat);
       this.masterData.countries_stat.map( (a) => a.percentage= ((parseInt(a.total_recovered.replace(/\,/g,''))/parseInt(a.cases.replace(/\,/g,'')))*100).toFixed(0));
       this.masterData.countries_stat.map( (a) => a.death_percentage= ((parseInt(a.deaths.replace(/\,/g,''))/parseInt     (a.cases.replace(/\,/g,'')))*100).toFixed(0));
       this.masterData.countries_stat.map( (a) => a.active_cal= (parseInt(a.cases.replace(/\,/g,''))-(parseInt(a.deaths.replace(/\,/g,''))+parseInt(a.total_recovered.replace(/\,/g,'')))).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-      console.log(this.masterData.countries_stat)
       this.searchedData = _.cloneDeep(this.masterData.countries_stat);
       this.updateTimestamp = this.masterData.statistic_taken_at;
       this.messageService.spinner = false;

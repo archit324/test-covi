@@ -186,7 +186,6 @@ export class IndiaComponent implements OnInit, OnDestroy {
           );
         this.india = _.filter(this.statewiseData, (b: any) => b.state === 'Total');
         this.createIndiaGraph();
-          
       });
 
     this.message.spinner = false;
