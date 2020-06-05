@@ -61,7 +61,6 @@ export class IndiaComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // call all the APIs on load
-    console.log(this.deaths)
     this.getZones();
     this.getData(event);
     this.getStateData();
@@ -169,6 +168,8 @@ export class IndiaComponent implements OnInit, OnDestroy {
               return 0 //default return value (no sorting)
           })
     }else {
+      this.statewiseData = a.statewise;
+    }
         this.statewiseData.map((a) => a.percentage = ((a.recovered / a.confirmed) * 100).toFixed(0))
         this.statewiseData.map((a) => a.death_percentage = ((a.deaths / a.confirmed) * 100).toFixed(0))
 
@@ -185,7 +186,7 @@ export class IndiaComponent implements OnInit, OnDestroy {
           );
         this.india = _.filter(this.statewiseData, (b: any) => b.state === 'Total');
         this.createIndiaGraph();
-          }
+          
       });
 
     this.message.spinner = false;
