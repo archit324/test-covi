@@ -53,17 +53,17 @@ export class WorldComponent implements OnChanges, OnDestroy {
         [obj => parseFloat(obj.cases.replace(/,/g, ''))], ['desc']);
       if ( event == "deaths" ){
         this.masterData.countries_stat.sort(function (a, b) {
-        return b.deaths - a.deaths;
+        return parseInt((b.deaths).replace(/\,/g,'')) - parseInt((a.deaths).replace(/\,/g,''));
       })
     }
     else if(event == "confirmed"){
           this.masterData.countries_stat.sort(function (a, b) {
-          return b.cases - a.cases;
+          return parseInt((b.cases).replace(/\,/g,'')) - parseInt((a.cases).replace(/\,/g,''));
       })
     }
     else if(event == "recovered"){
         this.masterData.countries_stat.sort(function (a, b) {
-            return b.total_recovered - a.total_recovered;
+            return parseInt((b.total_recovered).replace(/\,/g,'')) - parseInt((a.total_recovered).replace(/\,/g,''));
       })
     }
     else if(event == "alphabetical"){
