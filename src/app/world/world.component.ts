@@ -19,6 +19,8 @@ export class WorldComponent implements OnChanges, OnDestroy {
     {value: 'recovered', viewValue: 'Recovered'},
     {value: 'confirmed', viewValue: 'Confirmed'},
     {value: 'deaths', viewValue: 'Deaths'},
+    {value: 'active', viewValue: 'Active'},
+
     {value: 'alphabetical', viewValue: 'Alphabetical'},
   ];
   show: any = false;
@@ -27,18 +29,18 @@ export class WorldComponent implements OnChanges, OnDestroy {
   searchedData: any;
   updateTimestamp: any;
   constructor(private httpClient: HttpClient, public messageService: MessageService) {
-    this.getData(event);
+    this.getData();
 
   }
 
   ngOnChanges() {
     this.dataInterval = setInterval(() => {
-      this.getData(event);
-    }, 10000); // 10 sec interval
+      this.getData();
+    }, 100); // 10 sec interval
 
   }
 
-  getData(event) {
+  getData() {
     this.messageService.spinner = true;
     const httpOptions = {
       headers: new HttpHeaders({
@@ -51,36 +53,6 @@ export class WorldComponent implements OnChanges, OnDestroy {
       this.masterData = a;
       this.masterData.countries_stat = _.orderBy(this.masterData.countries_stat,
         [obj => parseFloat(obj.cases.replace(/,/g, ''))], ['desc']);
-      if ( event == "deaths" ){
-        this.masterData.countries_stat.sort(function (a, b) {
-        return parseInt((b.deaths).replace(/\,/g,'')) - parseInt((a.deaths).replace(/\,/g,''));
-      })
-    }
-    else if(event == "confirmed"){
-          this.masterData.countries_stat.sort(function (a, b) {
-          return parseInt((b.cases).replace(/\,/g,'')) - parseInt((a.cases).replace(/\,/g,''));
-      })
-    }
-    else if(event == "recovered"){
-        this.masterData.countries_stat.sort(function (a, b) {
-            return parseInt((b.total_recovered).replace(/\,/g,'')) - parseInt((a.total_recovered).replace(/\,/g,''));
-      })
-    }
-    else if(event == "alphabetical"){
-      this.masterData.countries_stat.sort(function(a, b){
-      var nameA=a.country_name.toLowerCase(), nameB=b.country_name.toLowerCase()
-      if (nameA < nameB) //sort string ascendin
-            return -1 
-            if (nameA > nameB)
-                return 1
-            return 0 //default return value (no sorting)
-        })
-  }else {
-    this.masterData.countries_stat = _.orderBy(this.masterData.countries_stat,
-      [obj => parseFloat(obj.cases.replace(/,/g, ''))], ['desc']);
-  }
-     
-      console.log(this.masterData.countries_stat);
       this.masterData.countries_stat.map( (a) => a.percentage= ((parseInt(a.total_recovered.replace(/\,/g,''))/parseInt(a.cases.replace(/\,/g,'')))*100).toFixed(0));
       this.masterData.countries_stat.map( (a) => a.death_percentage= ((parseInt(a.deaths.replace(/\,/g,''))/parseInt     (a.cases.replace(/\,/g,'')))*100).toFixed(0));
       this.masterData.countries_stat.map( (a) => a.active_cal= (parseInt(a.cases.replace(/\,/g,''))-(parseInt(a.deaths.replace(/\,/g,''))+parseInt(a.total_recovered.replace(/\,/g,'')))).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
@@ -90,6 +62,46 @@ export class WorldComponent implements OnChanges, OnDestroy {
     });
 
   }
+
+
+  sortData(event){
+    if ( event == "deaths" ){
+      this.masterData.countries_stat.sort(function (a, b) {
+      return parseInt((b.deaths).replace(/\,/g,'')) - parseInt((a.deaths).replace(/\,/g,''));
+    })
+  }
+  else if(event == "confirmed"){
+        this.masterData.countries_stat.sort(function (a, b) {
+        return parseInt((b.cases).replace(/\,/g,'')) - parseInt((a.cases).replace(/\,/g,''));
+    })
+  }
+  else if(event == "recovered"){
+      this.masterData.countries_stat.sort(function (a, b) {
+          return parseInt((b.total_recovered).replace(/\,/g,'')) - parseInt((a.total_recovered).replace(/\,/g,''));
+    })
+  }
+  else if(event == "active"){
+    this.masterData.countries_stat.sort(function (a, b) {
+        return parseInt((b.active_cal).replace(/\,/g,'')) - parseInt((a.active_cal).replace(/\,/g,''));
+  })
+}
+  else if(event == "alphabetical"){
+    this.masterData.countries_stat.sort(function(a, b){
+    var nameA=a.country_name.toLowerCase(), nameB=b.country_name.toLowerCase()
+    if (nameA < nameB) //sort string ascendin
+          return -1 
+          if (nameA > nameB)
+              return 1
+          return 0 //default return value (no sorting)
+      })
+    }else if(event == "nofilter"){
+      this.masterData.countries_stat = _.orderBy(this.masterData.countries_stat,
+      [obj => parseFloat(obj.cases.replace(/,/g, ''))], ['desc']);
+    }
+
+
+  }
+
 
   getCountry(country) {
     if (country.length > 0) {
