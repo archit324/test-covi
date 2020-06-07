@@ -16,11 +16,10 @@ export class WorldComponent implements OnChanges, OnDestroy {
   masterData: any = {};
   selectOptions: any = [
     {value: 'nofilter', viewValue: 'No Filter'},
-    {value: 'recovered', viewValue: 'Recovered'},
     {value: 'confirmed', viewValue: 'Confirmed'},
     {value: 'deaths', viewValue: 'Deaths'},
+    {value: 'recovered', viewValue: 'Recovered'},
     {value: 'active', viewValue: 'Active'},
-
     {value: 'alphabetical', viewValue: 'Alphabetical'},
   ];
   show: any = false;
@@ -76,11 +75,22 @@ export class WorldComponent implements OnChanges, OnDestroy {
     })
   }
   else if(event == "recovered"){
-      this.masterData.countries_stat.sort(function (a, b) {
+    let temp = [];
+    let temp1 = [];
+    temp = this.masterData.countries_stat.filter(a => a.total_recovered != "N/A");
+    temp1 = this.masterData.countries_stat.filter(a => a.total_recovered == "N/A");
+    this.masterData.countries_stat = [...temp,...temp1];
+    this.masterData.countries_stat.sort(function (a, b) {
           return parseInt((b.total_recovered).replace(/\,/g,'')) - parseInt((a.total_recovered).replace(/\,/g,''));
     })
   }
   else if(event == "active"){
+    let temp = [];
+    let temp1 = [];
+    temp = this.masterData.countries_stat.filter(a => a.total_recovered != "N/A");
+    temp1 = this.masterData.countries_stat.filter(a => a.total_recovered == "N/A");
+    this.masterData.countries_stat = [...temp,...temp1];
+
     this.masterData.countries_stat.sort(function (a, b) {
         return parseInt((b.active_cal).replace(/\,/g,'')) - parseInt((a.active_cal).replace(/\,/g,''));
   })
